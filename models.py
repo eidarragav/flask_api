@@ -20,13 +20,10 @@ class Post(db.Model):
     def to_dict(self):
         return {'id': self.id, 'titel': self.tile}
     
-
-
-
-
-
-    
-class Admin(db.Model):
-    __tablename__ = 'admins'
-    id = db.Column(db.Integer, primary_key = True, )
-    name = db.Column(db.String(200), nullable =True)
+class Book(db.Model):
+    __tablename__ = 'books'
+    id = db.Column(db.Integer, primary_key = True)
+    title = db.Column(db.String(200), nullable = False)
+    isbn = db.Column(db.String(200), nullable = False)
+    price = db.Column(db.Integer, nullable = False)
+    author_id = db.Column(db.Integer, nullable = False)

@@ -1,5 +1,5 @@
 from flask import jsonify, request, current_app
-from models import User, Post, db
+from models import User, Post, Book, db
 
 def register_routes(app):
     @app.route('/api/users', methods = ['GET'])
@@ -43,4 +43,37 @@ def register_routes(app):
 
         return jsonify({'STATUS' : 200})
     
+    @app.route("/api/books", methods = ['GET'])
+    def get_books():
+        books = Book.query.all()
+        return jsonify([{'id': b.id, 'title': b.title, 'isbn' : b.isbn, 
+                         'price' : b.isbn, 'author_id' : b.author_id} for b in books])
 
+    @app.route("/api/books", methods = ['POST'])
+    def post_books():
+        
+        user_id = request.headers.get("X-User-Id")
+        data = request.get_json()
+        
+        book = Book(
+            title = data["title"],
+            isbn = data["isbn"],
+            price = data["price"],
+            author_id = user_id
+        )
+
+        db.session.add(book)
+        db.session.commit()
+
+        return jsonify({"message" : "Libro creado"} )
+    
+    @app.route("/api/me/books", methods =['GET'])
+    def me_books():
+        xauthor_id = int(request.headers.get('X-User-Id'))
+        books = Book.query.filter_by(author_id = xauthor_id).all()
+        
+        return jsonify([{'id' : b.id, 'title' : b.title, 
+                         'isbn' : b.isbn, 'price' : b.price} for b in books])
+
+    
+    
