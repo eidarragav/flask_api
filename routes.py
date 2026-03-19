@@ -1,5 +1,19 @@
 from flask import jsonify, request, current_app
 from models import User, Post, Book, db
+import os
+from dotenv import load_dotenv
+from functools import wraps
+
+load_dotenv()
+
+def require_token(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get("Authorization")
+        if token!= os.getenv("TOKEN_APIS"):
+            return jsonify({'error' : "no aturizado"})
+        return f(*args, **kwargs)
+    return decorated
 
 def register_routes(app):
     @app.route('/api/users', methods = ['GET'])
